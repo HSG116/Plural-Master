@@ -78,24 +78,24 @@ document.addEventListener('DOMContentLoaded', function() {
             options: ["Tree", "Mountain", "Hole", "Balloon"]
         },
         {
-            question: "What word starts with 'T' and ends with 'a', and if you remove the 'T', it becomes a fruit?",
-            answer: "apple",
-            options: ["Banana", "Orange", "Apple", "Tomato"]
+            question: "You see me once in June, twice in November, but not at all in May. What am I?",
+            answer: "The letter E",
+            options: ["Sun", "The letter E", "Cloud", "Wind"]
         },
         {
             question: "I am a number. If you multiply me by myself, the result is 9. What number am I?",
             answer: "3",
-            options: ["2", "3", "4", "5"]
+            options: ["2", "5", "4", "3"]
         },
         {
             question: "White on top, black on bottom, gives light but never burns. What is it?",
             answer: "Lamp",
-            options: ["Moon", "Lamp", "Candle", "Flashlight"]
+            options: ["Lamp", "Moon", "Candle", "Flashlight"]
         },
         {
             question: "Which word means 'fast writing'?",
             answer: "Typing",
-            options: ["Copy", "Typing", "Cloning", "Translating"]
+            options: ["Copy", "Translating", "Cloning", "Typing"]
         },
         {
             question: "In HTML, what tag is used to show an image?",
@@ -105,17 +105,17 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             question: "The more you have of me, the less you see. What am I?",
             answer: "Darkness",
-            options: ["Light", "Mirror", "Darkness", "Shadow"]
+            options: ["Light", "Mirror", "Shadow", "Darkness"]
         },
         {
             question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
             answer: "Echo",
-            options: ["Ghost", "Shadow", "Echo", "Sound wave"]
+            options: ["Echo", "Shadow", "Ghost", "Sound wave"]
         },
         {
             question: "What has hands but can’t clap?",
             answer: "Clock",
-            options: ["Monkey", "Robot", "Clock", "Chair"]
+            options: ["Monkey", "Robot", "Chair", "Clock"]
         }
     ];
 
