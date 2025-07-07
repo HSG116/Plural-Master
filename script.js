@@ -138,94 +138,158 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // لعبة السحب والإفلات المعدلة
+    // لعبة اختيار الجمع الصحيح
+    function loadChooseCorrectGame() {
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+            showFinalScore();
+            return;
+        }
+        
+        const question = shuffledQuestions[currentQuestionIndex];
+        const questionContainer = document.createElement('div');
+        questionContainer.className = 'question-container';
+        
+        questionContainer.innerHTML = `
+            <div class="question">ما هو جمع كلمة "${question.singular}"؟</div>
+            <div class="options"></div>
+        `;
+        
+        const optionsContainer = questionContainer.querySelector('.options');
+        
+        // خلط الخيارات عشوائياً
+        const shuffledOptions = [...question.options].sort(() => Math.random() - 0.5);
+        
+        shuffledOptions.forEach(option => {
+            const optionElement = document.createElement('div');
+            optionElement.className = 'option';
+            optionElement.textContent = option;
+            
+            optionElement.addEventListener('click', function() {
+                if (option === question.correct) {
+                    optionElement.classList.add('correct');
+                    score += 10;
+                    showSuccessMessage();
+                } else {
+                    optionElement.classList.add('incorrect');
+                    showErrorMessage();
+                }
+                
+                // تعطيل جميع الخيارات بعد الاختيار
+                optionsContainer.querySelectorAll('.option').forEach(opt => {
+                    opt.style.pointerEvents = 'none';
+                    if (opt.textContent === question.correct) {
+                        opt.classList.add('correct');
+                    }
+                });
+                
+                // زر التالي
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'next-btn';
+                nextBtn.textContent = 'السؤال التالي';
+                nextBtn.addEventListener('click', function() {
+                    currentQuestionIndex++;
+                    loadGame('game1');
+                });
+                
+                questionContainer.appendChild(nextBtn);
+                
+                // تحديث النقاط
+                document.querySelector('.score').textContent = `النقاط: ${score}`;
+            });
+            
+            optionsContainer.appendChild(optionElement);
+        });
+        
+        gameContent.appendChild(questionContainer);
+    }
+    
+    // لعبة السحب والإفلات المحسنة
     function loadDragDropGame() {
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+            showFinalScore();
+            return;
+        }
+        
         const pairs = [...shuffledQuestions];
         const questionContainer = document.createElement('div');
         questionContainer.className = 'question-container';
         
         questionContainer.innerHTML = `
-            <div class="question">اسحب كل كلمة إلى جمعها الصحيح</div>
-            <div class="drag-drop-game">
-                <div class="drag-words">
-                    <h3>الكلمات</h3>
-                    <div class="words-container"></div>
+            <div class="question">اسحب الكلمات من العمود الأيسر إلى نظيراتها الصحيحة في العمود الأيمن</div>
+            <div class="drag-drop-container">
+                <div class="drag-column" id="leftColumn">
+                    <h3>الكلمات المفردة</h3>
+                    <div class="drag-items-container"></div>
                 </div>
-                <div class="drop-targets">
+                <div class="drag-column" id="rightColumn">
                     <h3>الجمع الصحيح</h3>
-                    <div class="targets-container"></div>
+                    <div class="drop-targets-container"></div>
                 </div>
             </div>
-            <div class="feedback"></div>
+            <div id="feedback" style="text-align: center; margin-top: 20px; font-weight: bold;"></div>
         `;
         
-        const wordsContainer = questionContainer.querySelector('.words-container');
-        const targetsContainer = questionContainer.querySelector('.targets-container');
-        const feedbackDiv = questionContainer.querySelector('.feedback');
+        const leftColumn = questionContainer.querySelector('.drag-items-container');
+        const rightColumn = questionContainer.querySelector('.drop-targets-container');
+        const feedbackDiv = questionContainer.querySelector('#feedback');
         
-        // إنشاء نسخة عشوائية من الكلمات
-        const allSingulars = pairs.map(pair => pair.singular);
-        const allPlurals = pairs.map(pair => pair.plural);
+        // إنشاء عناصر السحب (المفردات)
+        const singularWords = pairs.map(pair => pair.singular);
+        const shuffledSingulars = [...singularWords].sort(() => Math.random() - 0.5);
         
-        // خلط الكلمات عشوائياً
-        const shuffledSingulars = [...allSingulars].sort(() => Math.random() - 0.5);
-        const shuffledPlurals = [...allPlurals].sort(() => Math.random() - 0.5);
-        
-        // إضافة الكلمات إلى الجانب الأيسر
-        shuffledSingulars.forEach((word, index) => {
-            const wordElement = document.createElement('div');
-            wordElement.className = 'drag-word';
-            wordElement.textContent = word;
-            wordElement.draggable = true;
-            wordElement.dataset.word = word;
-            wordElement.dataset.type = 'singular';
+        shuffledSingulars.forEach(word => {
+            const dragItem = document.createElement('div');
+            dragItem.className = 'drag-item';
+            dragItem.textContent = word;
+            dragItem.draggable = true;
+            dragItem.dataset.word = word;
             
-            wordElement.addEventListener('dragstart', function(e) {
-                e.dataTransfer.setData('text/plain', JSON.stringify({
-                    word: word,
-                    type: 'singular'
-                }));
+            dragItem.addEventListener('dragstart', function(e) {
+                e.dataTransfer.setData('text/plain', word);
                 this.classList.add('dragging');
             });
             
-            wordElement.addEventListener('dragend', function() {
+            dragItem.addEventListener('dragend', function() {
                 this.classList.remove('dragging');
             });
             
-            wordsContainer.appendChild(wordElement);
+            leftColumn.appendChild(dragItem);
         });
         
-        // إضافة مناطق الإفلات إلى الجانب الأيمن
-        shuffledPlurals.forEach((word, index) => {
-            const targetElement = document.createElement('div');
-            targetElement.className = 'drop-target';
-            targetElement.dataset.expected = pairs.find(p => p.plural === word).singular;
+        // إنشاء مناطق الإفلات (الجمع) بشكل عشوائي
+        const pluralWords = pairs.map(pair => pair.plural);
+        const shuffledPlurals = [...pluralWords].sort(() => Math.random() - 0.5);
+        
+        shuffledPlurals.forEach(plural => {
+            const pair = pairs.find(p => p.plural === plural);
+            const dropTarget = document.createElement('div');
+            dropTarget.className = 'drop-target';
+            dropTarget.dataset.expected = pair.singular;
             
             const targetLabel = document.createElement('div');
             targetLabel.className = 'target-label';
-            targetLabel.textContent = word;
-            targetElement.appendChild(targetLabel);
+            targetLabel.textContent = plural;
+            dropTarget.appendChild(targetLabel);
             
             const dropArea = document.createElement('div');
             dropArea.className = 'drop-area';
-            dropArea.textContent = 'افلت هنا';
-            targetElement.appendChild(dropArea);
+            dropArea.innerHTML = '<span>افلت الكلمة هنا</span>';
+            dropTarget.appendChild(dropArea);
             
-            targetElement.addEventListener('dragover', function(e) {
+            dropTarget.addEventListener('dragover', function(e) {
                 e.preventDefault();
                 dropArea.classList.add('drag-over');
             });
             
-            targetElement.addEventListener('dragleave', function() {
+            dropTarget.addEventListener('dragleave', function() {
                 dropArea.classList.remove('drag-over');
             });
             
-            targetElement.addEventListener('drop', function(e) {
+            dropTarget.addEventListener('drop', function(e) {
                 e.preventDefault();
                 dropArea.classList.remove('drag-over');
                 
-                const draggedData = JSON.parse(e.dataTransfer.getData('text/plain'));
-                const draggedWord = draggedData.word;
+                const draggedWord = e.dataTransfer.getData('text/plain');
                 const expectedWord = this.dataset.expected;
                 
                 if (draggedWord === expectedWord) {
@@ -236,8 +300,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     `;
                     this.classList.add('matched');
                     
-                    // إخفاء الكلمة المسحوبة
-                    const draggedElement = document.querySelector(`.drag-word[data-word="${draggedWord}"]`);
+                    // إخفاء العنصر المسحوب
+                    const draggedElement = document.querySelector(`.drag-item[data-word="${draggedWord}"]`);
                     if (draggedElement) draggedElement.style.visibility = 'hidden';
                     
                     score += 10;
@@ -263,14 +327,178 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            targetsContainer.appendChild(targetElement);
+            rightColumn.appendChild(dropTarget);
         });
         
         gameContent.appendChild(questionContainer);
     }
-
-    // باقي دوال الألعاب (loadChooseCorrectGame, loadTrueFalseGame, loadPuzzleGame)
-    // ... [ابقى الدوال الأخرى كما هي دون تغيير]
+    
+    // لعبة صح أم خطأ
+    function loadTrueFalseGame() {
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+            showFinalScore();
+            return;
+        }
+        
+        const question = shuffledQuestions[currentQuestionIndex];
+        const questionContainer = document.createElement('div');
+        questionContainer.className = 'question-container';
+        
+        questionContainer.innerHTML = `
+            <div class="question">هل جمع كلمة "${question.singular}" هو "${question.plural}"؟</div>
+            <div class="true-false-container">
+                <button class="tf-btn true-btn">صح</button>
+                <button class="tf-btn false-btn">خطأ</button>
+            </div>
+        `;
+        
+        const trueBtn = questionContainer.querySelector('.true-btn');
+        const falseBtn = questionContainer.querySelector('.false-btn');
+        
+        function handleAnswer(isTrue) {
+            if ((isTrue && question.correct) || (!isTrue && !question.correct)) {
+                score += 10;
+                showSuccessMessage();
+            } else {
+                showErrorMessage();
+            }
+            
+            // تعطيل الأزرار بعد الإجابة
+            trueBtn.disabled = true;
+            falseBtn.disabled = true;
+            
+            // تلوين الأزرار حسب الإجابة الصحيحة
+            if (question.correct) {
+                trueBtn.classList.add('correct');
+            } else {
+                falseBtn.classList.add('correct');
+            }
+            
+            // زر التالي
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'next-btn';
+            nextBtn.textContent = 'السؤال التالي';
+            nextBtn.addEventListener('click', function() {
+                currentQuestionIndex++;
+                loadGame('game3');
+            });
+            
+            questionContainer.appendChild(nextBtn);
+            
+            // تحديث النقاط
+            document.querySelector('.score').textContent = `النقاط: ${score}`;
+        }
+        
+        trueBtn.addEventListener('click', () => handleAnswer(true));
+        falseBtn.addEventListener('click', () => handleAnswer(false));
+        
+        gameContent.appendChild(questionContainer);
+    }
+    
+    // لعبة الألغاز
+    function loadPuzzleGame() {
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+            showFinalScore();
+            return;
+        }
+        
+        const riddle = shuffledQuestions[currentQuestionIndex];
+        const puzzleContainer = document.createElement('div');
+        puzzleContainer.className = 'puzzle-container';
+        
+        puzzleContainer.innerHTML = `
+            <div class="puzzle-question">${riddle.question}</div>
+        `;
+        
+        if (riddle.type === 'multiple') {
+            const optionsContainer = document.createElement('div');
+            optionsContainer.className = 'puzzle-options';
+            
+            riddle.options.forEach(option => {
+                const optionBtn = document.createElement('button');
+                optionBtn.className = 'puzzle-option';
+                optionBtn.textContent = option;
+                
+                optionBtn.addEventListener('click', function() {
+                    if (option === riddle.answer) {
+                        optionBtn.classList.add('correct');
+                        score += 10;
+                        showSuccessMessage();
+                    } else {
+                        optionBtn.classList.add('incorrect');
+                        showErrorMessage();
+                    }
+                    
+                    // تعطيل جميع الخيارات بعد الاختيار
+                    optionsContainer.querySelectorAll('.puzzle-option').forEach(opt => {
+                        opt.disabled = true;
+                        if (opt.textContent === riddle.answer) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                    
+                    // زر التالي
+                    const nextBtn = document.createElement('button');
+                    nextBtn.className = 'next-btn';
+                    nextBtn.textContent = 'اللغز التالي';
+                    nextBtn.addEventListener('click', function() {
+                        currentQuestionIndex++;
+                        loadGame('game4');
+                    });
+                    
+                    puzzleContainer.appendChild(nextBtn);
+                    
+                    // تحديث النقاط
+                    document.querySelector('.score').textContent = `النقاط: ${score}`;
+                });
+                
+                optionsContainer.appendChild(optionBtn);
+            });
+            
+            puzzleContainer.appendChild(optionsContainer);
+        } else {
+            const inputContainer = document.createElement('div');
+            inputContainer.innerHTML = `
+                <input type="text" class="puzzle-input" placeholder="اكتب إجابتك هنا...">
+                <button class="play-btn" id="checkAnswer">تحقق</button>
+            `;
+            
+            puzzleContainer.appendChild(inputContainer);
+            
+            const checkBtn = puzzleContainer.querySelector('#checkAnswer');
+            const answerInput = puzzleContainer.querySelector('.puzzle-input');
+            
+            checkBtn.addEventListener('click', function() {
+                const userAnswer = answerInput.value.trim().toLowerCase();
+                const correctAnswer = riddle.answer.toLowerCase();
+                
+                if (userAnswer === correctAnswer) {
+                    answerInput.classList.add('correct');
+                    score += 10;
+                    showSuccessMessage();
+                } else {
+                    answerInput.classList.add('incorrect');
+                    showErrorMessage();
+                }
+                
+                // زر التالي
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'next-btn';
+                nextBtn.textContent = 'اللغز التالي';
+                nextBtn.addEventListener('click', function() {
+                    currentQuestionIndex++;
+                    loadGame('game4');
+                });
+                
+                puzzleContainer.appendChild(nextBtn);
+                
+                // تحديث النقاط
+                document.querySelector('.score').textContent = `النقاط: ${score}`;
+            });
+        }
+        
+        gameContent.appendChild(puzzleContainer);
+    }
     
     // عرض النتيجة النهائية
     function showFinalScore() {
