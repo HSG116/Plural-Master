@@ -4,12 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plural Master - تحدي الجمع في الإنجليزية</title>
+    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
-    <style>
-
-    </style>
 </head>
 <body>
     <div class="container">
@@ -17,64 +13,155 @@
             <div class="header-content">
                 <h1>Plural Master</h1>
                 <h2>تحدي الجمع في الإنجليزية</h2>
-                <p class="subtitle">تعلم قواعد الجمع في الإنجليزية بطريقة ممتعة وتفاعلية من خلال ألعاب مسلية!</p>
+                <p class="subtitle">تعلم قواعد الجمع في الإنجليزية بطريقة ممتعة وتفاعلية من خلال ألعاب تعليمية مسلية</p>
                 
                 <div class="start-section">
                     <img src="https://i.postimg.cc/y6D5jQgG/IMG.jpg" alt="QR Code" class="qr-code">
-                    <button class="start-btn" id="startBtn">ابدأ التحدي</button>
+                    <button class="start-btn" id="startBtn">ابدأ اللعب</button>
                 </div>
             </div>
         </header>
 
         <section class="games-section">
-            <h2 class="section-title">اختر لعبتك المفضلة</h2>
+            <h2 class="section-title">اختر لعبة لتحدي نفسك</h2>
             
             <div class="games-grid">
-                <!-- لعبة اختيار الجمع الصحيح -->
-                <div class="game-card" id="game1">
-                    <i class="fas fa-check-circle game-icon"></i>
-                    <h3 class="game-title">اختر الجمع الصحيح</h3>
-                    <p class="game-description">اختر الإجابة الصحيحة من بين الخيارات المتاحة لتكوين الجمع الصحيح للكلمة</p>
-                    <button class="play-btn">العب الآن</button>
-                </div>
-                
-                <!-- لعبة السحب والإفلات -->
-                <div class="game-card" id="game2">
-                    <i class="fas fa-arrows-alt game-icon"></i>
-                    <h3 class="game-title">السحب والإفلات</h3>
-                    <p class="game-description">اسحب الكلمة المفردة إلى مكان الجمع الصحيح لها في العمود المقابل</p>
-                    <button class="play-btn">العب الآن</button>
-                </div>
-                
-                <!-- لعبة صح أم خطأ -->
-                <div class="game-card" id="game3">
+                <!-- Game 1 -->
+                <div class="game-card" id="game1Card">
                     <i class="fas fa-question-circle game-icon"></i>
-                    <h3 class="game-title">صح أم خطأ</h3>
-                    <p class="game-description">اختر إذا كانت الكلمة المجموعة صحيحة أم خاطئة حسب قواعد الجمع</p>
+                    <h3 class="game-title">اختر الجمع الصحيح</h3>
+                    <p class="game-description">اختر الإجابة الصحيحة للكلمة المفردة من بين الخيارات المتاحة</p>
                     <button class="play-btn">العب الآن</button>
                 </div>
                 
-                <!-- لعبة الألغاز -->
-                <div class="game-card" id="game4">
+                <!-- Game 2 -->
+                <div class="game-card" id="game2Card">
+                    <i class="fas fa-hand-paper game-icon"></i>
+                    <h3 class="game-title">السحب والإفلات</h3>
+                    <p class="game-description">اسحب الكلمة المفردة إلى مكان الجمع الصحيح لها</p>
+                    <button class="play-btn">العب الآن</button>
+                </div>
+                
+                <!-- Game 3 -->
+                <div class="game-card" id="game3Card">
+                    <i class="fas fa-check-circle game-icon"></i>
+                    <h3 class="game-title">صح أم خطأ</h3>
+                    <p class="game-description">حدد ما إذا كانت صيغة الجمع المعروضة صحيحة أم خاطئة</p>
+                    <button class="play-btn">العب الآن</button>
+                </div>
+                
+                <!-- Game 4 -->
+                <div class="game-card" id="game4Card">
                     <i class="fas fa-puzzle-piece game-icon"></i>
-                    <h3 class="game-title">ألغاز مسلية</h3>
-                    <p class="game-description">استمتع بمجموعة من الألغاز الممتعة لتنشيط عقلك</p>
+                    <h3 class="game-title">ألغاز ممتعة</h3>
+                    <p class="game-description">حل الألغاز لتنمية مهاراتك في التفكير والإبداع</p>
                     <button class="play-btn">العب الآن</button>
                 </div>
             </div>
         </section>
     </div>
 
-    <!-- نافذة الألعاب المنبثقة -->
-    <div class="modal" id="gameModal">
+    <!-- Modals for each game -->
+    <!-- Game 1 Modal -->
+    <div class="modal" id="game1Modal">
         <div class="modal-content">
-            <span class="close-btn" id="closeModal">&times;</span>
-            <div id="gameContent"></div>
+            <span class="close-btn">&times;</span>
+            <div class="game-header">
+                <h2>اختر الجمع الصحيح</h2>
+                <div class="score">النقاط: <span id="game1Score">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="game1Question"></div>
+                <div class="options" id="game1Options"></div>
+            </div>
+            
+            <div class="text-center">
+                <button class="next-btn" id="game1NextBtn" style="display: none;">السؤال التالي</button>
+                <button class="restart-btn" id="game1RestartBtn" style="display: none;">إعادة اللعب</button>
+            </div>
         </div>
     </div>
 
-    <!-- احتفالية الإجابة الصحيحة -->
-    <div id="celebration"></div>
+    <!-- Game 2 Modal -->
+    <div class="modal" id="game2Modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="game-header">
+                <h2>السحب والإفلات</h2>
+                <div class="score">النقاط: <span id="game2Score">0</span></div>
+            </div>
+            
+            <div class="drag-drop-container">
+                <div class="drag-column">
+                    <h3>المفرد</h3>
+                    <div id="singularWords"></div>
+                </div>
+                <div class="drag-column">
+                    <h3>الجمع</h3>
+                    <div id="pluralDropZones"></div>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button class="next-btn" id="game2NextBtn" style="display: none;">الجولة التالية</button>
+                <button class="restart-btn" id="game2RestartBtn" style="display: none;">إعادة اللعب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game 3 Modal -->
+    <div class="modal" id="game3Modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="game-header">
+                <h2>صح أم خطأ</h2>
+                <div class="score">النقاط: <span id="game3Score">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="game3Question"></div>
+            </div>
+            
+            <div class="true-false-container">
+                <button class="tf-btn true-btn" id="trueBtn">صح</button>
+                <button class="tf-btn false-btn" id="falseBtn">خطأ</button>
+            </div>
+            
+            <div class="text-center">
+                <button class="next-btn" id="game3NextBtn" style="display: none;">السؤال التالي</button>
+                <button class="restart-btn" id="game3RestartBtn" style="display: none;">إعادة اللعب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game 4 Modal -->
+    <div class="modal" id="game4Modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="game-header">
+                <h2>ألغاز ممتعة</h2>
+                <div class="score">النقاط: <span id="game4Score">0</span></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question" id="game4Question"></div>
+                <div class="options" id="game4Options"></div>
+                <div id="game4AnswerContainer" style="display: none; margin-top: 20px;">
+                    <input type="text" id="game4AnswerInput" placeholder="اكتب إجابتك هنا">
+                    <button class="next-btn" id="game4SubmitAnswer">تحقق</button>
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <button class="next-btn" id="game4NextBtn" style="display: none;">اللغز التالي</button>
+                <button class="restart-btn" id="game4RestartBtn" style="display: none;">إعادة اللعب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Celebration elements -->
+    <div id="celebrationContainer"></div>
 
     <script src="script.js"></script>
 </body>
