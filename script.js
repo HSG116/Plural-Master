@@ -86,6 +86,36 @@ document.addEventListener('DOMContentLoaded', function() {
             question: "I am a number. If you multiply me by myself, the result is 9. What number am I?",
             answer: "3",
             options: ["2", "3", "4", "5"]
+        },
+        {
+            question: "White on top, black on bottom, gives light but never burns. What is it?",
+            answer: "Lamp",
+            options: ["Moon", "Lamp", "Candle", "Flashlight"]
+        },
+        {
+            question: "Which word means 'fast writing'?",
+            answer: "Typing",
+            options: ["Copy", "Typing", "Cloning", "Translating"]
+        },
+        {
+            question: "In HTML, what tag is used to show an image?",
+            answer: "<img>",
+            options: ["<img>", "<pic>", "<photo>", "<image>"],
+        },
+        {
+            question: "hchjdj",
+            answer: "3",
+            options: ["2", "3", "4", "5"]
+        },
+        {
+            question: "frffg",
+            answer: "3",
+            options: ["2", "3", "4", "5"]
+        },
+        {
+            question: "Ijdhs?",
+            answer: "3",
+            options: ["2", "3", "4", "5"]
         }
     ];
 
