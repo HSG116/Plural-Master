@@ -470,63 +470,81 @@ document.addEventListener('DOMContentLoaded', function() {
         game3RestartBtn.style.display = 'block';
     }
 
-    // Game 4 functions
-    function startGame4() {
-        currentGame4Riddle = 0;
-        game4Score = 0;
-        game4ScoreEl.textContent = game4Score;
-        loadGame4Riddle();
-    }
+// Game 4 functions - المعدلة
+function startGame4() {
+    currentGame4Riddle = 0;
+    game4Score = 0;
+    game4ScoreEl.textContent = game4Score;
+    loadGame4Riddle();
+}
+
+function loadGame4Riddle() {
+    const riddle = game4Riddles[currentGame4Riddle];
+    game4QuestionEl.textContent = riddle.question;
     
-    function loadGame4Riddle() {
-        const riddle = game4Riddles[currentGame4Riddle];
-        game4QuestionEl.textContent = riddle.question;
-        
-        game4OptionsEl.innerHTML = '';
-        riddle.options.forEach(option => {
-            const optionEl = document.createElement('div');
-            optionEl.classList.add('option');
-            optionEl.textContent = option;
-            optionEl.addEventListener('click', () => {
-                game4AnswerInput.value = option;
-                game4AnswerContainer.style.display = 'block';
-            });
-            game4OptionsEl.appendChild(optionEl);
+    game4OptionsEl.innerHTML = '';
+    riddle.options.forEach(option => {
+        const optionEl = document.createElement('div');
+        optionEl.classList.add('option');
+        optionEl.textContent = option;
+        optionEl.addEventListener('click', () => {
+            // التحقق مباشرة عند الضغط على الخيار
+            checkGame4Answer(option);
         });
+        game4OptionsEl.appendChild(optionEl);
+    });
+    
+    game4NextBtn.style.display = 'none';
+    game4RestartBtn.style.display = 'none';
+}
+
+function checkGame4Answer(selectedAnswer) {
+    const riddle = game4Riddles[currentGame4Riddle];
+    const isCorrect = selectedAnswer.toLowerCase() === riddle.answer.toLowerCase();
+    
+    if (isCorrect) {
+        game4Score++;
+        game4ScoreEl.textContent = game4Score;
+        showCelebration(true);
         
-        game4AnswerContainer.style.display = 'none';
-        game4AnswerInput.value = '';
-        game4NextBtn.style.display = 'none';
-        game4RestartBtn.style.display = 'none';
+        // إظهار جميع الخيارات مع تمييز الصحيح
+        const options = document.querySelectorAll('#game4Options .option');
+        options.forEach(option => {
+            option.style.pointerEvents = 'none';
+            if (option.textContent.toLowerCase() === riddle.answer.toLowerCase()) {
+                option.classList.add('correct');
+            }
+        });
+    } else {
+        showCelebration(false);
+        
+        // إظهار الخيار الصحيح وتمييز الخطأ
+        const options = document.querySelectorAll('#game4Options .option');
+        options.forEach(option => {
+            option.style.pointerEvents = 'none';
+            if (option.textContent.toLowerCase() === selectedAnswer.toLowerCase()) {
+                option.classList.add('incorrect');
+            }
+            if (option.textContent.toLowerCase() === riddle.answer.toLowerCase()) {
+                option.classList.add('correct');
+            }
+        });
     }
     
-    function checkGame4Answer() {
-        const riddle = game4Riddles[currentGame4Riddle];
-        const userAnswer = game4AnswerInput.value.trim().toLowerCase();
-        
-        if (userAnswer === riddle.answer.toLowerCase()) {
-            game4Score++;
-            game4ScoreEl.textContent = game4Score;
-            showCelebration(true);
-        } else {
-            showCelebration(false);
-        }
-        
-        game4NextBtn.style.display = 'block';
+    game4NextBtn.style.display = 'block';
+}
+
+function endGame4() {
+    game4QuestionEl.textContent = `انتهت اللعبة! نتيجتك النهائية: ${game4Score}/${game4Riddles.length}`;
+    game4OptionsEl.innerHTML = '';
+    
+    if (game4Score === game4Riddles.length) {
+        game4QuestionEl.innerHTML += '<br><span style="color: #4caf50; font-size: 1.5rem;">ممتاز! لقد حللت جميع الألغاز بشكل صحيح!</span>';
     }
     
-    function endGame4() {
-        game4QuestionEl.textContent = `انتهت اللعبة! نتيجتك النهائية: ${game4Score}/${game4Riddles.length}`;
-        game4OptionsEl.innerHTML = '';
-        game4AnswerContainer.style.display = 'none';
-        
-        if (game4Score === game4Riddles.length) {
-            game4QuestionEl.innerHTML += '<br><span style="color: #4caf50; font-size: 1.5rem;">ممتاز! لقد حللت جميع الألغاز بشكل صحيح!</span>';
-        }
-        
-        game4NextBtn.style.display = 'none';
-        game4RestartBtn.style.display = 'block';
-    }
+    game4NextBtn.style.display = 'none';
+    game4RestartBtn.style.display = 'block';
+}
 
     // Celebration functions
     function showCelebration(isSuccess) {
