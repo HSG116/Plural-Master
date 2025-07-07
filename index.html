@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plural Master - تحدي الجمع في الإنجليزية</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* CSS سيتم وضعه في ملف منفصل */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <h1>Plural Master</h1>
+                <h2>تحدي الجمع في الإنجليزية</h2>
+                <p class="subtitle">تعلم قواعد الجمع في الإنجليزية بطريقة ممتعة وتفاعلية من خلال ألعاب مسلية!</p>
+                
+                <div class="start-section">
+                    <img src="https://i.postimg.cc/y6D5jQgG/IMG.jpg" alt="QR Code" class="qr-code">
+                    <button class="start-btn" id="startBtn">ابدأ التحدي</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="games-section">
+            <h2 class="section-title">اختر لعبتك المفضلة</h2>
+            
+            <div class="games-grid">
+                <!-- لعبة اختيار الجمع الصحيح -->
+                <div class="game-card" id="game1">
+                    <i class="fas fa-check-circle game-icon"></i>
+                    <h3 class="game-title">اختر الجمع الصحيح</h3>
+                    <p class="game-description">اختر الإجابة الصحيحة من بين الخيارات المتاحة لتكوين الجمع الصحيح للكلمة</p>
+                    <button class="play-btn">العب الآن</button>
+                </div>
+                
+                <!-- لعبة السحب والإفلات -->
+                <div class="game-card" id="game2">
+                    <i class="fas fa-arrows-alt game-icon"></i>
+                    <h3 class="game-title">السحب والإفلات</h3>
+                    <p class="game-description">اسحب الكلمة المفردة إلى مكان الجمع الصحيح لها في العمود المقابل</p>
+                    <button class="play-btn">العب الآن</button>
+                </div>
+                
+                <!-- لعبة صح أم خطأ -->
+                <div class="game-card" id="game3">
+                    <i class="fas fa-question-circle game-icon"></i>
+                    <h3 class="game-title">صح أم خطأ</h3>
+                    <p class="game-description">اختر إذا كانت الكلمة المجموعة صحيحة أم خاطئة حسب قواعد الجمع</p>
+                    <button class="play-btn">العب الآن</button>
+                </div>
+                
+                <!-- لعبة الألغاز -->
+                <div class="game-card" id="game4">
+                    <i class="fas fa-puzzle-piece game-icon"></i>
+                    <h3 class="game-title">ألغاز مسلية</h3>
+                    <p class="game-description">استمتع بمجموعة من الألغاز الممتعة لتنشيط عقلك</p>
+                    <button class="play-btn">العب الآن</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- نافذة الألعاب المنبثقة -->
+    <div class="modal" id="gameModal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModal">&times;</span>
+            <div id="gameContent"></div>
+        </div>
+    </div>
+
+    <!-- احتفالية الإجابة الصحيحة -->
+    <div id="celebration"></div>
+
+    <script>
+        // JavaScript سيتم وضعه في ملف منفصل
+    </script>
+</body>
+</html>
