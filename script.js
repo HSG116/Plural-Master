@@ -417,6 +417,121 @@ function loadDragDropGame() {
                 dropArea.innerHTML = `
                     <div style="color: #4CAF50; font-weight: bold;">
                         ${draggedWord} ✓
+function loadDragDropGame() {
+    if (currentQuestionIndex >= shuffledQuestions.length) {
+        showFinalScore();
+        return;
+    }
+    
+    const pairs = [...shuffledQuestions];
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    
+    questionContainer.innerHTML = `
+        <div class="question">اسحب الكلمات من العمود الأيسر إلى نظيراتها الصحيحة في العمود الأيمن</div>
+        <div class="drag-drop-container">
+            <div class="drag-column" id="leftColumn">
+                <h3>الكلمات</h3>
+            </div>
+            <div class="drag-column" id="rightColumn">
+                <h3>الجمع الصحيح</h3>
+            </div>
+        </div>
+        <div id="feedback" style="text-align: center; margin-top: 20px; font-weight: bold;"></div>
+    `;
+    
+    const leftColumn = questionContainer.querySelector('#leftColumn');
+    const rightColumn = questionContainer.querySelector('#rightColumn');
+    const feedbackDiv = questionContainer.querySelector('#feedback');
+    
+    // إنشاء مصفوفة تحتوي على جميع الكلمات (مفرد وجمع)
+    let allWords = [];
+    pairs.forEach(pair => {
+        allWords.push({
+            text: pair.singular,
+            type: 'singular',
+            pair: pair.plural
+        });
+        allWords.push({
+            text: pair.plural,
+            type: 'plural',
+            pair: pair.singular
+        });
+    });
+    
+    // خلط الكلمات عشوائياً
+    allWords = allWords.sort(() => Math.random() - 0.5);
+    
+    // إضافة الكلمات إلى العمود الأيسر
+    allWords.forEach(word => {
+        const wordItem = document.createElement('div');
+        wordItem.className = 'drag-item';
+        wordItem.textContent = word.text;
+        wordItem.draggable = true;
+        wordItem.dataset.word = word.text;
+        wordItem.dataset.type = word.type;
+        wordItem.dataset.pair = word.pair;
+        
+        wordItem.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                text: word.text,
+                type: word.type,
+                pair: word.pair,
+                id: Math.random().toString(36).substr(2, 9)
+            }));
+            setTimeout(() => this.classList.add('dragging'), 0);
+        });
+        
+        wordItem.addEventListener('dragend', function() {
+            this.classList.remove('dragging');
+        });
+        
+        leftColumn.appendChild(wordItem);
+    });
+    
+    // إنشاء مناطق إفلات في العمود الأيمن (عشوائية)
+    const shuffledPairs = [...pairs].sort(() => Math.random() - 0.5);
+    
+    shuffledPairs.forEach(pair => {
+        // إنشاء منطقة إفلات للجمع
+        const pluralDropZone = document.createElement('div');
+        pluralDropZone.className = 'drop-zone';
+        pluralDropZone.dataset.expected = pair.singular; // الكلمة المتوقعة لهذه المنطقة
+        
+        // عرض الكلمة المستهدفة (الجمع)
+        const targetWord = document.createElement('div');
+        targetWord.textContent = pair.plural;
+        targetWord.style.fontWeight = 'bold';
+        targetWord.style.marginBottom = '10px';
+        pluralDropZone.appendChild(targetWord);
+        
+        // منطقة الإفلات الفعلية
+        const dropArea = document.createElement('div');
+        dropArea.className = 'drop-area';
+        dropArea.innerHTML = '<span>افلت الكلمة هنا</span>';
+        
+        pluralDropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            dropArea.classList.add('drag-over');
+        });
+        
+        pluralDropZone.addEventListener('dragleave', function() {
+            dropArea.classList.remove('drag-over');
+        });
+        
+        pluralDropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropArea.classList.remove('drag-over');
+            
+            const draggedData = JSON.parse(e.dataTransfer.getData('text/plain'));
+            const draggedWord = draggedData.text;
+            const correctPair = draggedData.pair;
+            
+            // التحقق إذا كانت الكلمة المسحوبة هي نظيرة الصحيحة
+            if (draggedWord === this.dataset.expected) {
+                dropArea.innerHTML = `
+                    <div style="color: #4CAF50; font-weight: bold;">
+                        ${draggedWord} ✓
                     </div>
                 `;
                 this.classList.add('filled');
@@ -434,7 +549,7 @@ function loadDragDropGame() {
                 document.querySelector('.score').textContent = `النقاط: ${score}`;
                 
                 // التحقق من اكتمال اللعبة
-                const allFilled = document.querySelectorAll('.drop-zone.filled').length === allWords.length;
+                const allFilled = document.querySelectorAll('.drop-zone.filled').length === pairs.length;
                 if (allFilled) {
                     setTimeout(() => {
                         currentQuestionIndex = shuffledQuestions.length;
@@ -448,8 +563,8 @@ function loadDragDropGame() {
             }
         });
         
-        dropZone.appendChild(dropArea);
-        rightColumn.appendChild(dropZone);
+        pluralDropZone.appendChild(dropArea);
+        rightColumn.appendChild(pluralDropZone);
     });
     
     gameContent.appendChild(questionContainer);
