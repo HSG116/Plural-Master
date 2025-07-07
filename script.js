@@ -305,98 +305,119 @@ document.addEventListener('DOMContentLoaded', function() {
         gameContent.appendChild(questionContainer);
     }
     
-    // لعبة السحب والإفلات
-    function loadDragDropGame() {
-        if (currentQuestionIndex >= shuffledQuestions.length) {
-            showFinalScore();
-            return;
-        }
-        
-        const pairs = [...shuffledQuestions];
-        const questionContainer = document.createElement('div');
-        questionContainer.className = 'question-container';
-        
-        questionContainer.innerHTML = `
-            <div class="question">اسحب كل كلمة مفردة إلى جمعها الصحيح</div>
-            <div class="drag-drop-container">
-                <div class="drag-column" id="singularColumn">
-                    <h3>المفرد</h3>
-                </div>
-                <div class="drag-column" id="pluralColumn">
-                    <h3>الجمع</h3>
-                </div>
+// لعبة السحب والإفلات المعدلة
+function loadDragDropGame() {
+    if (currentQuestionIndex >= shuffledQuestions.length) {
+        showFinalScore();
+        return;
+    }
+    
+    const pairs = [...shuffledQuestions];
+    const questionContainer = document.createElement('div');
+    questionContainer.className = 'question-container';
+    
+    questionContainer.innerHTML = `
+        <div class="question">اسحب كل كلمة إلى جمعها الصحيح</div>
+        <div class="drag-drop-container">
+            <div class="drag-column" id="wordsColumn">
+                <h3>الكلمات</h3>
             </div>
-        `;
+            <div class="drag-column" id="matchesColumn">
+                <h3>التوصيلات</h3>
+            </div>
+        </div>
+    `;
+    
+    const wordsColumn = questionContainer.querySelector('#wordsColumn');
+    const matchesColumn = questionContainer.querySelector('#matchesColumn');
+    
+    // إنشاء مصفوفة تحتوي على جميع الكلمات (مفرد وجمع)
+    let allWords = [];
+    pairs.forEach(pair => {
+        allWords.push({text: pair.singular, type: 'singular', pair: pair.plural});
+        allWords.push({text: pair.plural, type: 'plural', pair: pair.singular});
+    });
+    
+    // خلط الكلمات عشوائياً
+    allWords = allWords.sort(() => Math.random() - 0.5);
+    
+    // إضافة الكلمات إلى العمود الأول
+    allWords.forEach(word => {
+        const wordItem = document.createElement('div');
+        wordItem.className = 'drag-item';
+        wordItem.textContent = word.text;
+        wordItem.draggable = true;
+        wordItem.dataset.word = word.text;
+        wordItem.dataset.type = word.type;
+        wordItem.dataset.pair = word.pair;
         
-        const singularColumn = questionContainer.querySelector('#singularColumn');
-        const pluralColumn = questionContainer.querySelector('#pluralColumn');
-        
-        // خلط الأزواج عشوائياً
-        const shuffledSingulars = pairs.map(pair => pair.singular).sort(() => Math.random() - 0.5);
-        const shuffledPlurals = pairs.map(pair => pair.plural).sort(() => Math.random() - 0.5);
-        
-        // إضافة العناصر المفردة
-        shuffledSingulars.forEach(singular => {
-            const singularItem = document.createElement('div');
-            singularItem.className = 'drag-item';
-            singularItem.textContent = singular;
-            singularItem.draggable = true;
-            singularItem.dataset.singular = singular;
-            
-            singularItem.addEventListener('dragstart', function(e) {
-                e.dataTransfer.setData('text/plain', singular);
-                setTimeout(() => this.classList.add('dragging'), 0);
-            });
-            
-            singularItem.addEventListener('dragend', function() {
-                this.classList.remove('dragging');
-            });
-            
-            singularColumn.appendChild(singularItem);
+        wordItem.addEventListener('dragstart', function(e) {
+            e.dataTransfer.setData('text/plain', JSON.stringify({
+                text: word.text,
+                type: word.type,
+                pair: word.pair
+            }));
+            setTimeout(() => this.classList.add('dragging'), 0);
         });
         
-        // إضافة مناطق الإفلات للجمع
-        shuffledPlurals.forEach(plural => {
-            const dropZone = document.createElement('div');
-            dropZone.className = 'drop-zone';
-            dropZone.dataset.plural = plural;
-            dropZone.textContent = 'افلتها هنا';
+        wordItem.addEventListener('dragend', function() {
+            this.classList.remove('dragging');
+        });
+        
+        wordsColumn.appendChild(wordItem);
+    });
+    
+    // إنشاء مناطق إفلات لكل كلمة
+    allWords.forEach(word => {
+        const dropZone = document.createElement('div');
+        dropZone.className = 'drop-zone';
+        dropZone.dataset.word = word.text;
+        
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        });
+        
+        dropZone.addEventListener('dragleave', function() {
+            this.classList.remove('drag-over');
+        });
+        
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
             
-            dropZone.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                this.classList.add('drag-over');
-            });
+            const draggedData = JSON.parse(e.dataTransfer.getData('text/plain'));
+            const draggedWord = draggedData.text;
+            const draggedType = draggedData.type;
+            const correctPair = draggedData.pair;
             
-            dropZone.addEventListener('dragleave', function() {
-                this.classList.remove('drag-over');
-            });
-            
-            dropZone.addEventListener('drop', function(e) {
-                e.preventDefault();
-                this.classList.remove('drag-over');
+            // إذا كانت الكلمة المسحوبة هي نظيرة الصحيحة لهذه المنطقة
+            if (correctPair === this.dataset.word) {
+                this.innerHTML = `
+                    <div class="matched-pair">
+                        <div>${draggedType === 'singular' ? draggedWord : this.dataset.word}</div>
+                        <div class="arrow">↓</div>
+                        <div>${draggedType === 'singular' ? this.dataset.word : draggedWord}</div>
+                    </div>
+                `;
+                this.classList.add('filled');
                 
-                const singular = e.dataTransfer.getData('text/plain');
-                const correctPlural = pairs.find(p => p.singular === singular).plural;
+                // إزالة العنصر المسحوب من القائمة
+                const draggedItem = document.querySelector(`.drag-item[data-word="${draggedWord}"]`);
+                if (draggedItem) draggedItem.style.display = 'none';
                 
-                if (correctPlural === this.dataset.plural) {
-                    this.textContent = `${singular} → ${correctPlural}`;
-                    this.classList.add('filled');
-                    
-                    // إزالة العنصر المسحوب
-                    const draggedItem = document.querySelector(`.drag-item[data-singular="${singular}"]`);
-                    if (draggedItem) draggedItem.style.display = 'none';
-                    
-                    score += 10;
-                    showSuccessMessage();
-                } else {
-                    showErrorMessage();
-                }
+                // إزالة منطقة الإفلات المقابلة
+                const pairZone = document.querySelector(`.drop-zone[data-word="${correctPair}"]`);
+                if (pairZone) pairZone.style.display = 'none';
+                
+                score += 5;
+                showSuccessMessage();
                 
                 // تحديث النقاط
                 document.querySelector('.score').textContent = `النقاط: ${score}`;
                 
                 // التحقق من اكتمال اللعبة
-                const allFilled = document.querySelectorAll('.drop-zone.filled').length === pairs.length;
+                const allFilled = document.querySelectorAll('.drop-zone.filled').length === allWords.length/2;
                 if (allFilled) {
                     const nextBtn = document.createElement('button');
                     nextBtn.className = 'next-btn';
@@ -408,13 +429,16 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     questionContainer.appendChild(nextBtn);
                 }
-            });
-            
-            pluralColumn.appendChild(dropZone);
+            } else {
+                showErrorMessage();
+            }
         });
         
-        gameContent.appendChild(questionContainer);
-    }
+        matchesColumn.appendChild(dropZone);
+    });
+    
+    gameContent.appendChild(questionContainer);
+}
     
     // لعبة صح أم خطأ
     function loadTrueFalseGame() {
