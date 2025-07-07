@@ -100,22 +100,22 @@ document.addEventListener('DOMContentLoaded', function() {
         {
             question: "In HTML, what tag is used to show an image?",
             answer: "<img>",
-            options: ["<img>", "<pic>", "<photo>", "<image>"],
+            options: ["<img>", "<pic>", "<photo>", "<image>"]
         },
         {
-            question: "hchjdj",
-            answer: "3",
-            options: ["2", "3", "4", "5"]
+            question: "The more you have of me, the less you see. What am I?",
+            answer: "Darkness",
+            options: ["Light", "Mirror", "Darkness", "Shadow"]
         },
         {
-            question: "frffg",
-            answer: "3",
-            options: ["2", "3", "4", "5"]
+            question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?",
+            answer: "Echo",
+            options: ["Ghost", "Shadow", "Echo", "Sound wave"]
         },
         {
-            question: "Ijdhs?",
-            answer: "3",
-            options: ["2", "3", "4", "5"]
+            question: "What has hands but can’t clap?",
+            answer: "Clock",
+            options: ["Monkey", "Robot", "Clock", "Chair"]
         }
     ];
 
