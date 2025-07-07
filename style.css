@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -606,44 +608,6 @@ body::before {
     animation: fillSuccess 0.5s ease-in-out;
 }
 
-.matched-pair {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-}
-
-.matched-pair .arrow {
-    color: #4ecdc4;
-    font-weight: bold;
-    animation: bounce 1s infinite;
-}
-
-@keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-3px); }
-}
-
-.drag-item {
-    user-select: none;
-    touch-action: none;
-}
-
-.drop-zone {
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.7);
-}
-
-.drop-zone.filled {
-    background: linear-gradient(145deg, #e8f5e8, #c8e6c9);
-    transform: scale(1.02);
-    box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
-}
-
 @keyframes fillSuccess {
     0% { transform: scale(1); }
     50% { transform: scale(1.05); }
@@ -725,70 +689,8 @@ body::before {
     100% { text-shadow: 2px 2px 20px rgba(76, 175, 80, 0.5); }
 }
 
-/* لعبة الألغاز */
-.puzzle-container {
+.text-center {
     text-align: center;
-    padding: 20px;
-    background: linear-gradient(145deg, #f8f9fa, #ffffff);
-    border-radius: 20px;
-    margin-bottom: 30px;
-}
-
-.puzzle-question {
-    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
-    margin-bottom: 25px;
-    color: #333;
-    font-weight: 600;
-    line-height: 1.6;
-}
-
-.puzzle-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 15px;
-    margin: 20px 0;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
-
-.puzzle-options {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 30px;
-}
-
-.puzzle-option {
-    padding: 15px 25px;
-    background: linear-gradient(145deg, #ffffff, #f8f9fa);
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1.1rem;
-    font-weight: 500;
-}
-
-.puzzle-option:hover {
-    border-color: #4ecdc4;
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(78, 205, 196, 0.3);
-}
-
-.puzzle-input {
-    width: 100%;
-    padding: 15px;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    transition: all 0.3s ease;
-}
-
-.puzzle-input:focus {
-    border-color: #4ecdc4;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.3);
 }
 
 /* تحسينات للجوال */
@@ -853,10 +755,5 @@ body::before {
     
     .option {
         padding: 15px;
-    }
-    
-    .puzzle-option {
-        padding: 10px 15px;
-        font-size: 1rem;
     }
 }
